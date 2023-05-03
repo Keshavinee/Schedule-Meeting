@@ -52,6 +52,30 @@ def index():
     else:
         return render_template('index.html')
 
+@app.route('/schedule_appointment', methods=['GET', 'POST'])
+def schedule_appointment():
+    conn = sqlite3.connect('nbyula_terraformers.db')
+    c = conn.cursor()
+    if request.method == 'POST':
+        title = request.form['title']
+        agenda = request.form['agenda']
+        time = request.form['time']
+        guest = request.form['guest']
+        # Check if guest is available
+        c.execute('SELECT off_hours FROM terraformers WHERE username=?', (guest,))
+        off_hours = c.fetchone()[0]
+        if time in off_hours:
+            error = 'The guest is not available at this time.'
+            return render_template('schedule_appointment.html', error=error)
+        else:
+            c.execute('INSERT INTO appointments (title, agenda, time, guest) VALUES (?, ?, ?, ?)',
+                    (title, agenda, time, guest))
+            conn.commit()
+            return redirect(url_for('appointments'))
+    else:
+        terraformers = c.execute('SELECT username FROM users').fetchall()
+        return render_template('booking.html', terraformers=terraformers)
+
 @app.route('/dashboard')
 def dashboard():
     # Check if the user is logged in
@@ -61,7 +85,7 @@ def dashboard():
         c.execute("SELECT * FROM users WHERE username = ?", (session['user'],))
         user = c.fetchone()
         conn.close()
-        return render_template('dashboard.html', user=user)
+        return render_template('dashboard.html', user=user[0])
     else:
         return redirect(url_for('index'))
 
