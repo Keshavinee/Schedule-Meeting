@@ -74,7 +74,10 @@ def schedule_appointment():
             return redirect(url_for('appointments'))
     else:
         terraformers = c.execute('SELECT username FROM users').fetchall()
-        return render_template('booking.html', terraformers=terraformers)
+        names = []
+        for user in terraformers:
+            names.append(user[0])
+        return render_template('booking.html', terraformers=names)
 
 @app.route('/dashboard')
 def dashboard():

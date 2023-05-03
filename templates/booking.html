@@ -89,6 +89,7 @@
                         <div class="dropdown-menu m-0">
                             <a class="dropdown-item" href="{{ url_for('schedule_appointment') }}">View Profile</a>
                             <a class="dropdown-item" href="{{ url_for('schedule_appointment') }}">Edit Profile</a>
+                            <a class="dropdown-item" href="{{ url_for('schedule_appointment') }}">Off-hours & Availability</a>
                         </div>
                     </div>
                    
@@ -136,9 +137,10 @@
                                 <div class="col-md-6">
                                     <div class="form-floating">
                                         <select class="form-select bg-transparent" id="guest" name="guest">
-                                            <option value="1">Destination 1</option>
-                                            <option value="2">Destination 2</option>
-                                            <option value="3">Destination 3</option>
+                                            <option value="empty">Choose one guest</option>
+                                            {% for name in terraformers %}
+                                                <option value="{{ loop.index }}">{{ name }}</option>
+                                            {% endfor %}
                                         </select>
                                         <label for="guest">Guest name</label>
                                     </div>
